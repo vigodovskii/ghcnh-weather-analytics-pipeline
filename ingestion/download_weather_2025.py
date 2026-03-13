@@ -6,7 +6,7 @@ import os
 BASE_URL = "https://www.ncei.noaa.gov/data/global-hourly/access/2025/"
 
 # Local directory to save the raw CSV files
-OUTPUT_DIR = "data/raw/2025"
+OUTPUT_DIR = "../data/raw/2025"
 
 # Make sure the output directory exists
 os.makedirs(OUTPUT_DIR, exist_ok=True)
