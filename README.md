@@ -20,14 +20,18 @@ The target user is a climate or weather analyst who wants to analyze temperature
 - Google Cloud Storage
 - BigQuery
 
-## Planned Pipeline
-1. Download raw weather files in batch
+## Planned Pipeline until midterm
+1. Download raw weather files in batch from the NOAA dataset
 2. Store raw data locally
-3. Load staging data into PostgreSQL
+3. Load raw data into staging tables in PostgreSQL
 4. Transform raw observations into analytics-ready tables
-5. Upload raw/curated data to GCS
-6. Load transformed data into BigQuery
-7. Schedule workflows with an orchestrator
+5. Schedule the ingestion and transformation pipeline using a workflow orchestrator 
+
+## Planned Pipeline until midterm
+1. Upload raw and transformed data to Google Cloud Storage (GCS)
+2. Load curated data from GCS into BigQuery for analytics
+3. Provision cloud infrastructure using Terraform
+4. Extend the workflow orchestrator to run the full cloud pipeline
 
 ## Repository Structure
 - `ingestion/`
