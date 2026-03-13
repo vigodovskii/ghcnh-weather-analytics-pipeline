@@ -23,8 +23,8 @@ csv_files = [link.get("href") for link in links if link.get("href").endswith(".c
 
 print(f"{len(csv_files)} files found")
 
-# Start downloading each CSV file
-for file in csv_files:
+# Limit to the first 500 CSV files (instead of 12'000+)
+for file in csv_files[:500]:
     file_url = BASE_URL + file
     file_path = os.path.join(OUTPUT_DIR, file)
 
