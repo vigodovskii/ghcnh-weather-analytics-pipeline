@@ -27,7 +27,7 @@ The target user is a climate or weather analyst who wants to analyze temperature
 4. Transform raw observations into analytics-ready tables
 5. Schedule the ingestion and transformation pipeline using a workflow orchestrator 
 
-## Planned Pipeline until midterm
+## Planned Pipeline after midterm
 1. Upload raw and transformed data to Google Cloud Storage (GCS)
 2. Load curated data from GCS into BigQuery for analytics
 3. Provision cloud infrastructure using Terraform
