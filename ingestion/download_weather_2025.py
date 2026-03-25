@@ -41,7 +41,7 @@ def download_file(file):
     except Exception as e:
         return f"Failed {file}: {e}"
 
-# Parallel download mit bis zu 20 Threads gleichzeitig
+# Parallel download with 20 Threads 
 with ThreadPoolExecutor(max_workers=50) as executor:
     futures = [executor.submit(download_file, file) for file in csv_files]
     for future in as_completed(futures):
