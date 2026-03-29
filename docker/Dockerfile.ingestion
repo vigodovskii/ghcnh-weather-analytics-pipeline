@@ -1,0 +1,22 @@
+FROM python:3.11-slim
+
+# Set working directory inside container
+WORKDIR /app
+
+# Install system packages
+RUN apt-get update && apt-get install -y \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy dependency file first
+COPY requirements.txt .
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy only the folders/files needed for ingestion
+COPY ingestion ./ingestion
+COPY data ./data
+
+# Default command: download + load into Postgres
+CMD ["bash", "-c", "python ingestion/download_weather_2025.py && python ingestion/load_to_postgres.py"]

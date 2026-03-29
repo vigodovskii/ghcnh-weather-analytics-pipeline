@@ -3,17 +3,40 @@ version: '3.8'
 services:
   postgres:
     image: postgres:15
+    container_name: weather_postgres
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: weather
     ports:
       - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
 
   pgadmin:
     image: dpage/pgadmin4
+    container_name: weather_pgadmin
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
       PGADMIN_DEFAULT_PASSWORD: admin
     ports:
       - "8081:80"
+    depends_on:
+      - postgres
+    restart: always
+
+  ingestion:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.ingestion
+    container_name: weather_ingestion
+    depends_on:
+      - postgres
+    volumes:
+      - ../data:/deng/data
+      - ../ingestion:/deng/ingestion
+    command: bash -c "python ingestion/download_weather_2025.py && python ingestion/load_to_postgres.py"
+
+volumes:
+  postgres_data:
