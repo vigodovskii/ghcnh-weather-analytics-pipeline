@@ -7,7 +7,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 BASE_URL = "https://www.ncei.noaa.gov/data/global-hourly/access/2025/"
 
 # Local directory to save the raw CSV files
-OUTPUT_DIR = "../data/raw/2025"
+OUTPUT_DIR = "data/raw/2025"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # Load the HTML page containing the list of files
