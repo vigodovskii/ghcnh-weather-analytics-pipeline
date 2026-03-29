@@ -25,6 +25,9 @@ The target user is a climate or weather analyst who wants to analyze temperature
 2. Start Docker containers:
    - First, remove any old containers and volumes (clean start): docker compose -f docker/docker-compose.yml down -v
    - Build and start the containers: docker compose -f docker/docker-compose.yml up --build -d
+   - The ingestion container will automatically:
+        1. Run ingestion/download_weather_2025.py to download the NOAA CSV files.
+        2. Run ingestion/load_to_postgres.py to load the data into PostgreSQL with transformations applied (placeholder values, numeric conversions, and normalized station names).
 3. Configure PgAdmin:
    - Open your browser: http://localhost:8081
    - Login using: Email: admin@admin.com, Password: admin
