@@ -67,6 +67,6 @@ The target user is a climate or weather analyst who wants to analyze temperature
 - Ingestion Pipeline ✓
 - Local Storage ✓
 - Docker ✓
-- Data Transformation
+- Data Transformation ✓
 - Workflow Orchestration
 
