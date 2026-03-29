@@ -31,7 +31,7 @@ The target user is a climate or weather analyst who wants to analyze temperature
 3. Configure PgAdmin:
    - Open your browser: http://localhost:8081
    - Login using: Email: admin@admin.com, Password: admin
-   - Create a new Server: Name: weather_postgres, Hostname / IP:  postgres, Port: 5423, Maintenance DB: weather, Username: postgres, Password: postgres
+   - Create a new Server: Name: weather_postgres, Hostname / IP:  postgres, Port: 5432, Maintenance DB: weather, Username: postgres, Password: postgres
 4. Verify the data:
    - In PgAdmin, select the database "weather", right-click on the weather database and choose query tool. Run: SELECT * FROM weather_data LIMIT 10;
    - You should see the first rows of your ingested weather data.
