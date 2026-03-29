@@ -7,7 +7,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 BASE_URL = "https://www.ncei.noaa.gov/data/global-hourly/access/2025/"
 
 # Local directory to save the raw CSV files
-OUTPUT_DIR = "../data/raw/2025"
+OUTPUT_DIR = "data/raw/2025"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # Load the HTML page containing the list of files
@@ -22,8 +22,8 @@ csv_files = [link.get("href") for link in links if link.get("href").endswith(".c
 
 print(f"{len(csv_files)} files found")
 
-# Limit to the first 500 CSV files
-csv_files = csv_files[:500]
+# Limit to the first 1000 CSV files
+csv_files = csv_files[:1000]
 
 def download_file(file):
     file_url = BASE_URL + file
@@ -41,7 +41,7 @@ def download_file(file):
     except Exception as e:
         return f"Failed {file}: {e}"
 
-# Parallel download with 20 Threads 
+# Parallel download with 50 Threads 
 with ThreadPoolExecutor(max_workers=50) as executor:
     futures = [executor.submit(download_file, file) for file in csv_files]
     for future in as_completed(futures):
