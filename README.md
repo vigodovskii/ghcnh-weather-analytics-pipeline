@@ -56,10 +56,8 @@ The target user is a climate or weather analyst who wants to analyze temperature
 
 ## Repository Structure
 - `ingestion/`
-- `transformations/`
 - `orchestration/`
 - `terraform/`
-- `postgres/`
 - `docs/`
 - `tests/`
 
