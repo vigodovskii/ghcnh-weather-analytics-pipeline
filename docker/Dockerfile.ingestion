@@ -1,7 +1,7 @@
 FROM python:3.11-slim
 
 # Set working directory inside container
-WORKDIR /app
+WORKDIR /deng
 
 # Install system packages
 RUN apt-get update && apt-get install -y \
