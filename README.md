@@ -63,7 +63,7 @@ The target user is a climate or weather analyst who wants to analyze temperature
 ## Status
 - Ingestion Pipeline ✓
 - Local Storage ✓
-- Docker ~ To Do: Add Python ingestion scripts as a service, update README to build, run, and verify.
+- Docker ✓
 - Data Transformation
 - Workflow Orchestration
 
