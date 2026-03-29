@@ -20,6 +20,24 @@ The target user is a climate or weather analyst who wants to analyze temperature
 - Google Cloud Storage
 - BigQuery
 
+## Quick Start
+1. Clone the repository
+2. Start Docker containers:
+   - First, remove any old containers and volumes (clean start): docker compose -f docker/docker-compose.yml down -v
+   - Build and start the containers: docker compose -f docker/docker-compose.yml up --build -d
+3. Configure PgAdmin:
+   - Open your browser: http://localhost:8081
+   - Login using: Email: admin@admin.com, Password: admin
+   - Create a new Server: Name: weather_postgres, Hostname / IP:  postgres, Port: 5423, Maintenance DB: weather, Username: postgres, Password: postgres
+4. Verify the data:
+   - In PgAdmin, run: SELECT * FROM weather_data LIMIT 10;
+   - You should see the first rows of your ingested weather data.
+
+
+
+
+
+
 ## Planned Pipeline until midterm
 1. Download raw weather files in batch from the NOAA dataset
 2. Store raw data locally
