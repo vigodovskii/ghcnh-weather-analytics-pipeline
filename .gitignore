@@ -1,0 +1,10 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Kestra local database
+data/database.mv.db
+data/database.trace.db
+
+# Raw downloaded data
+data/raw/
