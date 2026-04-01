@@ -44,14 +44,15 @@ services:
               paths:
                 - /app/flows
         kestra:
-            server:
-              basic-auth:
-                enabled: false
-            tutorialFlows:
-              enabled: false
-            tasks:
-              tmp-dir:
-                path: /tmp/kestra-wd/tmp
+          server:
+            basic-auth:
+              username: admin@kestra.io
+              password: Admin1234
+          tutorialFlows:
+            enabled: false
+          tasks:
+            tmp-dir:
+              path: /tmp/kestra-wd/tmp
     volumes:
       - kestra_data:/app/storage
       - ../orchestration/kestra/flows:/app/flows
