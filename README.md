@@ -15,29 +15,103 @@ The target user is a climate or weather analyst who wants to analyze temperature
 - PostgreSQL
 - pgAdmin
 - Docker Compose
-- Airflow or Kestra
+- Kestra
 - Terraform
 - Google Cloud Storage
 - BigQuery
 
 ## Quick Start
 1. Clone the repository
+
 2. Start Docker containers:
-   - First, remove any old containers and volumes (clean start): docker compose -f docker/docker-compose.yml down -v
-   - Build and start the containers: docker compose -f docker/docker-compose.yml up --build -d
-   - The ingestion container will automatically:
-        1. Run ingestion/download_weather_2025.py to download the NOAA CSV files.
-        2. Run ingestion/load_to_postgres.py to load the data into PostgreSQL with transformations applied (placeholder values, numeric conversions, and normalized station names).
-3. Configure PgAdmin:
-   - Open your browser: http://localhost:8081
-   - Login using: Email: admin@admin.com, Password: admin
-   - Create a new Server: Name: weather_postgres, Hostname / IP:  postgres, Port: 5432, Maintenance DB: weather, Username: postgres, Password: postgres
-4. Verify the data:
-   - In PgAdmin, select the database "weather", right-click on the weather database and choose query tool. Run: SELECT * FROM weather_data LIMIT 10;
-   - You should see the first rows of your ingested weather data.
+   ```bash
+   docker compose -f docker/docker-compose.yml down
+   rm -f data/database.mv.db data/database.trace.db
+   docker compose -f docker/docker-compose.yml up -d --build
+   ```
+
+3. Check that the services are running:
+   ```bash
+   docker compose -f docker/docker-compose.yml ps
+   ```
+
+4. Open Kestra:
+   - URL: `http://localhost:8080/ui/`
+   - Username: `admin@kestra.io`
+   - Password: `Admin1234`
+
+5. Run the orchestration flow in Kestra:
+   - Namespace: `weather.midterm`
+   - Flow: `weather_local_ingestion`
+   - Example input values:
+     - `year = 2025`
+     - `file_limit = 1`
+     - `row_limit = 10`
+
+6. Configure pgAdmin:
+   - URL: `http://localhost:8081`
+   - Email: `admin@admin.com`
+   - Password: `admin`
+
+   Create a new server with:
+   - Host: `postgres`
+   - Port: `5432`
+   - Database: `weather`
+   - Username: `postgres`
+   - Password: `postgres`
+
+7. Verify the data:
+   ```bash
+   docker exec -it weather_postgres psql -U postgres -d weather -c "SELECT COUNT(*) FROM weather_data;"
+   ```
+
+   Example:
+   ```bash
+   docker exec -it weather_postgres psql -U postgres -d weather -c "SELECT station, date, name, tmp, dew, slp FROM weather_data LIMIT 5;"
+   ```
 
 
 
+## Workflow Orchestration
+
+This project uses **Kestra** as the workflow orchestrator for the midterm stage.
+
+Implemented flow:
+- Namespace: `weather.midterm`
+- Flow: `weather_local_ingestion`
+
+The flow performs:
+1. batch download of NOAA weather files
+2. loading transformed data into local PostgreSQL
+3. validation that rows were inserted successfully
+
+The flow supports:
+- manual execution
+- scheduled execution
+- future runs
+- missed schedule recovery / backfill behavior
+
+
+## Data Transformation
+
+The pipeline includes a transformation step before loading data into PostgreSQL.
+
+Current transformations:
+- convert column names to lowercase
+- normalize station names
+- parse timestamps
+- convert latitude, longitude, and elevation to numeric values
+- replace placeholder values in weather fields such as `tmp`, `dew`, and `slp`
+- standardize selected raw weather values for querying
+
+Why this transformation is necessary:
+The raw NOAA files contain placeholder values, mixed formats, and raw string-based measurements that are not directly suitable for analysis.
+
+How it supports the use case:
+The target analyst needs structured and queryable weather observations across stations and time. These transformations make the data usable for filtering, comparison, and downstream analytics.
+
+What problem it solves:
+It converts raw operational weather files into a consistent local analytical dataset.
 
 
 
@@ -62,9 +136,17 @@ The target user is a climate or weather analyst who wants to analyze temperature
 - `tests/`
 
 ## Status
+
+#### Midterm
+- Dataset and Use Case ✓
 - Ingestion Pipeline ✓
 - Local Storage ✓
-- Docker ✓
+- Docker Compose ✓
 - Data Transformation ✓
-- Workflow Orchestration
+- Workflow Orchestration with Kestra ✓
+
+### Final Stage
+- GCS data lake planned
+- BigQuery warehouse planned
+- Terraform planned
 
