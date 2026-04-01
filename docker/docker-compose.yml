@@ -44,12 +44,14 @@ services:
               paths:
                 - /app/flows
         kestra:
-          server:
-            basic-auth:
+            server:
+              basic-auth:
+                enabled: false
+            tutorialFlows:
               enabled: false
-          tasks:
-            tmp-dir:
-              path: /tmp/kestra-wd/tmp
+            tasks:
+              tmp-dir:
+                path: /tmp/kestra-wd/tmp
     volumes:
       - kestra_data:/app/storage
       - ../orchestration/kestra/flows:/app/flows
