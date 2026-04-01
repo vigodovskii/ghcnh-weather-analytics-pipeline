@@ -115,18 +115,20 @@ It converts raw operational weather files into a consistent local analytical dat
 
 
 
-## Planned Pipeline until midterm
-1. Download raw weather files in batch from the NOAA dataset
-2. Store raw data locally
-3. Load raw data into staging tables in PostgreSQL
-4. Transform raw observations into analytics-ready tables
-5. Schedule the ingestion and transformation pipeline using a workflow orchestrator 
+## Status
 
-## Planned Pipeline after midterm
-1. Upload raw and transformed data to Google Cloud Storage (GCS)
-2. Load curated data from GCS into BigQuery for analytics
-3. Provision cloud infrastructure using Terraform
-4. Extend the workflow orchestrator to run the full cloud pipeline
+### Midterm
+- Dataset and Use Case ✓
+- Ingestion Pipeline ✓
+- Local Storage ✓
+- Docker Compose ✓
+- Data Transformation ✓
+- Workflow Orchestration with Kestra ✓
+
+### Final Stage
+- GCS data lake planned
+- BigQuery warehouse planned
+- Terraform planned
 
 ## Repository Structure
 - `ingestion/`
