@@ -61,15 +61,28 @@ The target user is a climate or weather analyst who wants to analyze temperature
    - Password: `postgres`
 
 7. Verify the data:
+   
+   From the terminal:
    ```bash
    docker exec -it weather_postgres psql -U postgres -d weather -c "SELECT COUNT(*) FROM weather_data;"
    ```
-
+   
    Example:
    ```bash
    docker exec -it weather_postgres psql -U postgres -d weather -c "SELECT station, date, name, tmp, dew, slp FROM weather_data LIMIT 5;"
    ```
 
+   Or using the **pgAdmin Query Tool**:
+   ```sql
+   SELECT COUNT(*) FROM weather_data;
+   ```
+
+   Example:
+   ```sql
+   SELECT station, date, name, tmp, dew, slp
+   FROM weather_data
+   LIMIT 5;
+   ```
 
 
 ## Workflow Orchestration
