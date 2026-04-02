@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   postgres:
     image: postgres:15
@@ -26,17 +24,43 @@ services:
       - postgres
     restart: always
 
-  ingestion:
+  kestra:
     build:
       context: ..
-      dockerfile: docker/Dockerfile.ingestion
-    container_name: weather_ingestion
+      dockerfile: docker/Dockerfile.kestra
+    container_name: weather_kestra
+    user: "root"
     depends_on:
       - postgres
+    ports:
+      - "8080:8080"
+    command: server local
+    environment:
+      KESTRA_CONFIGURATION: |
+        micronaut:
+          io:
+            watch:
+              enabled: true
+              paths:
+                - /app/flows
+        kestra:
+          server:
+            basic-auth:
+              username: admin@kestra.io
+              password: Admin1234
+          tutorialFlows:
+            enabled: false
+          tasks:
+            tmp-dir:
+              path: /tmp/kestra-wd/tmp
     volumes:
-      - ../data:/deng/data
-      - ../ingestion:/deng/ingestion
-    command: bash -c "python ingestion/download_weather_2025.py && python ingestion/load_to_postgres.py"
+      - kestra_data:/app/storage
+      - ../orchestration/kestra/flows:/app/flows
+      - ../ingestion:/app/ingestion
+      - ../data:/app/data
+      - /tmp/kestra-wd:/tmp/kestra-wd
+    restart: always
 
 volumes:
   postgres_data:
+  kestra_data:
