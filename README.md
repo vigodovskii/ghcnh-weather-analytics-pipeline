@@ -1,14 +1,20 @@
 # ghcnh-weather-analytics-pipeline
-End-to-end batch data engineering pipeline for NOAA global hourly weather station data.
+End-to-end batch data engineering pipeline for preparing weather data to support flight delay analysis and prediction.
 
 ## Project Goal
-This project builds a reproducible batch pipeline that ingests raw weather observations, stores them locally and in the cloud, applies transformations, and serves curated analytics tables for downstream analysis.
+The goal of this project is to process raw weather data and transform it into a clean and structured format.
+This prepared data can then be used for analysis and machine learning models to help predict flight delays.
 
 ## Dataset
-NOAA / NCEI global hourly weather station data.
+We use the NOAA / NCEI Global Hourly Weather Dataset (2025).
+
+This dataset contains hourly weather observations from stations all around the world.
+Because the full dataset is very large, we limited our project to the first 1000 files.
+
+Each file includes weather data collected at specific weather stations over time.
 
 ## Use Case
-The target user is a climate or weather analyst who wants to analyze temperature, precipitation, wind, and pressure patterns across stations, countries, and time.
+The main user of this pipeline is an airline data analyst who needs reliable weather data for analysis. Raw weather data is often large and unstructured, making it difficult to use directly. This pipeline cleans and organizes the data so it can support analytics and machine learning models for predicting flight delays.
 
 ## Planned Stack
 - Python
