@@ -162,7 +162,7 @@ It converts raw operational weather files into a consistent local analytical dat
    ```hcl
    project_id  = "your-project-id"
    region      = "europe-west6"
-   bucket_name = "your-bucket-name
+   bucket_name = "your-bucket-name"
    dataset_id  = "your_dataset"
    ```
 
