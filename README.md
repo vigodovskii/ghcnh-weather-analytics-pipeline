@@ -137,28 +137,33 @@ It converts raw operational weather files into a consistent local analytical dat
 1. Install required tools:
    - Terraform
    - Google Cloud CLI
+  
+2. Create a Google Cloud Project:
+   - Go to the Google Cloud Console: https://console.cloud.google.com/
+   - Create a new project ("ghcnh-weather-pipeline")
+   - Enable billing for the project
 
-2. Authenticate with Google Cloud:
+4. Authenticate with Google Cloud:
    ```bash
    gcloud auth application-default login
    ```
 
-3. Navigate to Terraform directory:
+5. Navigate to Terraform directory:
    ```bash
    cd terraform
    ```
 
-4. Initialize Terraform:
+6. Initialize Terraform:
    ```bash
    terraform init
    ```
 
-5. Create Terraform variables file:
+7. Create Terraform variables file:
    ```bash
    cp terraform.tfvars.example terraform.tfvars
    ```
 
-6. Update the variables in terraform.tfvars:
+8. Update the variables in terraform.tfvars:
    ```hcl
    project_id  = "your-project-id"
    region      = "europe-west6"
@@ -166,18 +171,18 @@ It converts raw operational weather files into a consistent local analytical dat
    dataset_id  = "your_dataset"
    ```
 
-7. Preview Infrastracture changes:
+9. Preview Infrastracture changes:
    ```bash
    terraform plan
    ```
 
-8. Apply infrastructure:
+10. Apply infrastructure:
    ```bash
    terraform apply
    ```
-9. confirm deployment
+11. confirm deployment
 
-10. Verify Cloud Resources in Google Cloud Console
+12. Verify Cloud Resources in Google Cloud Console
    In the Google Cloud Console, check that the Cloud Storage bucket has been created and is visible in the selected project.
    Also verify that the BigQuery dataset exists and is correctly displayed in the project.
 
