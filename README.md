@@ -26,7 +26,7 @@ The main user of this pipeline is an airline data analyst who needs reliable wea
 - Google Cloud Storage
 - BigQuery
 
-## Quick Start
+## Quick Start Midterm
 1. Clone the repository
 
 2. Start Docker containers:
@@ -131,6 +131,57 @@ The target analyst needs structured and queryable weather observations across st
 
 What problem it solves:
 It converts raw operational weather files into a consistent local analytical dataset.
+
+
+## Quick Start Final 
+1. Install required tools:
+   - Terraform
+   - Google Cloud CLI
+
+2. Authenticate with Google Cloud:
+   ```bash
+   gcloud auth application-default login
+   ```
+
+3. Navigate to Terraform directory:
+   ```bash
+   cd terraform
+   ```
+
+4. Initialize Terraform:
+   ```bash
+   terraform init
+   ```
+
+5. Create Terraform variables file:
+   ```bash
+   cp terraform.tfvars.example terraform.tfvars
+   ```
+
+6. Update the variables in terraform.tfvars:
+   ```hcl
+   project_id  = "your-project-id"
+   region      = "europe-west6"
+   bucket_name = "your-bucket-name
+   ```
+
+7. Preview Infrastracture changes:
+   ```bash
+   terraform plan
+   ```
+
+8. Apply infrastructure:
+   ```bash
+   terraform apply
+   ```
+9. confirm deployment
+
+10. In Google Cloud COnsole verify:
+   ### Cloud Storage
+   - Bucket exists
+
+   ### BigQuery
+   - Dataset exists
 
 
 
