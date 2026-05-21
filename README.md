@@ -171,8 +171,8 @@ It converts raw operational weather files into a consistent local analytical dat
    dataset_id  = "your_dataset"
    ```
    We used:
-   bucket_name = "ghcnh-weather-data-lake"
-   dataset_id  = "weather_warehouse"
+   - bucket_name = "ghcnh-weather-data-lake"
+   - dataset_id  = "weather_warehouse"
 
 10. Preview Infrastracture changes:
    ```bash
