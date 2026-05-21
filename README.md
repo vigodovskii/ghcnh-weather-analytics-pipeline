@@ -170,13 +170,16 @@ It converts raw operational weather files into a consistent local analytical dat
    bucket_name = "your-bucket-name"
    dataset_id  = "your_dataset"
    ```
+   We used:
+   bucket_name = "ghcnh-weather-data-lake"
+   dataset_id  = "weather_warehouse"
 
-9. Preview Infrastracture changes:
+10. Preview Infrastracture changes:
    ```bash
    terraform plan
    ```
 
-10. Apply infrastructure:
+11. Apply infrastructure:
    ```bash
    terraform apply
    ```
