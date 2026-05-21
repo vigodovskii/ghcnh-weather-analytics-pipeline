@@ -186,8 +186,8 @@ It converts raw operational weather files into a consistent local analytical dat
 10. confirm deployment
 
 11. Verify Cloud Resources in Google Cloud Console
-   In the Google Cloud Console, check that the Cloud Storage bucket has been created and is visible in the selected project.
-   Also verify that the BigQuery dataset exists and is correctly displayed in the project.
+    - In the Google Cloud Console, check that the Cloud Storage bucket has been created and is visible in the selected project.
+    - Also verify that the BigQuery dataset exists and is correctly displayed in the project.
 
 
 
