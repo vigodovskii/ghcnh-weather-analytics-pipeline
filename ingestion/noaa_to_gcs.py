@@ -90,7 +90,6 @@ def run_pipeline(files, max_workers=8):
 # Main
 csv_files = get_csv_files()
 
-# Test with 10 files first, then remove this line for the full 1000
-csv_files = csv_files[:10]
+csv_files = csv_files[:1000]
 
 run_pipeline(csv_files)
