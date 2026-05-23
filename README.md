@@ -222,7 +222,9 @@ It converts raw operational weather files into a consistent local analytical dat
 
 ### Final Stage
 - Infrastructure as code (Terraform) ✓
-- GCS data lake Ingestion Pipeline
+- GCS data lake Ingestion Pipeline ✓
+     - ingestion/noaa_to_gcs.py
+     - orchestration needs to be done
 - BigQuery warehouse Transformation Pipeline
 
 ## Repository Structure
