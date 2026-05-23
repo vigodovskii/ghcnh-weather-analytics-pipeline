@@ -148,7 +148,7 @@ It converts raw operational weather files into a consistent local analytical dat
    gcloud auth application-default login
    ```
 
-   ## Troubleshooting
+   ### Troubleshooting
    If the following Terraform authentication error appears:
 
    ```text
@@ -167,22 +167,22 @@ It converts raw operational weather files into a consistent local analytical dat
    ```
    
 
-5. Navigate to Terraform directory:
+4. Navigate to Terraform directory:
    ```bash
    cd terraform
    ```
 
-6. Initialize Terraform:
+5. Initialize Terraform:
    ```bash
    terraform init
    ```
 
-7. Create Terraform variables file:
+6. Create Terraform variables file:
    ```bash
    cp terraform.tfvars.example terraform.tfvars
    ```
 
-8. Update the variables in terraform.tfvars:
+7. Update the variables in terraform.tfvars:
    ```hcl
    project_id  = "your-project-id"
    region      = "europe-west6"
@@ -193,18 +193,18 @@ It converts raw operational weather files into a consistent local analytical dat
    - bucket_name = "ghcnh-weather-data-lake"
    - dataset_id  = "weather_warehouse"
 
-9. Preview Infrastracture changes:
+8. Preview Infrastracture changes:
    ```bash
    terraform plan
    ```
 
-10. Apply infrastructure:
+9. Apply infrastructure:
    ```bash
    terraform apply
    ```
-11. confirm deployment
+10. confirm deployment
 
-12. Verify Cloud Resources in Google Cloud Console
+11. Verify Cloud Resources in Google Cloud Console
     - In the Google Cloud Console, check that the Cloud Storage bucket has been created and is visible in the selected project.
     - Also verify that the BigQuery dataset exists and is correctly displayed in the project.
 
