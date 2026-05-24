@@ -1,0 +1,3 @@
+# GCP credentials
+credentials/service_account.json
+terraform/terraform.tfvars
