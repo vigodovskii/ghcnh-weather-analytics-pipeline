@@ -4,3 +4,5 @@ pandas
 psycopg2-binary
 SQLAlchemy
 google-cloud-storage
+google-cloud-bigquery
+pyarrow
