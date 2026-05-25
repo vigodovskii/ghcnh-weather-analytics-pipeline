@@ -332,8 +332,7 @@ across stations, and future feature engineering for weather-based operational an
 │   ├── Dockerfile.ingestion
 │   └── Dockerfile.kestra
 ├── docs/
-│   ├── midterm_orchestration_plan.md
-│   └── sql_queries.sql
+│   └── midterm_orchestration_plan.md
 ├── ingestion/
 │   ├── download_weather_2025.py
 │   ├── download_weather_param.py
