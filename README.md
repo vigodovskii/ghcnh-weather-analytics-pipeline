@@ -86,6 +86,10 @@ cd ghcnh-weather-analytics-pipeline
 docker compose -f docker/docker-compose.yml up -d --build
 ```
 
+> For the final cloud pipeline, you also need:
+> - a valid `credentials/service_account.json`
+> - a local `terraform/terraform.tfvars`
+
 ### 3. Verify services are running
 
 ```bash
@@ -288,7 +292,6 @@ The pipeline includes a transformation step applied before loading into both Pos
 | Lat / lon / elevation → numeric | Geospatial filtering |
 | Placeholder replacement (`9999`, `+9999` → `NULL`) | Prevents skewed aggregations |
 | Temperature / pressure ÷ 10 | NOAA stores values as tenths of their unit |
-| Wind field → direction + speed | Structured access without string parsing |
 
 ### Why it is necessary
 

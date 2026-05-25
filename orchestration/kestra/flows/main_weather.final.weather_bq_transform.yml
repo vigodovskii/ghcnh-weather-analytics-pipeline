@@ -29,6 +29,13 @@ inputs:
     type: STRING
     defaults: "terraform-demo-488900"
 
+triggers:
+  - id: weekly_schedule
+    type: io.kestra.plugin.core.trigger.Schedule
+    cron: "0 7 * * 1"
+    timezone: Europe/Zurich
+    recoverMissedSchedules: ALL
+
 tasks:
   - id: load_to_bigquery
     type: io.kestra.plugin.scripts.shell.Commands
