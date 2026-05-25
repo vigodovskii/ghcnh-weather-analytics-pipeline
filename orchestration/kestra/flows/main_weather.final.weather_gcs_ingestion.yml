@@ -1,0 +1,72 @@
+id: weather_gcs_ingestion
+namespace: weather.final
+
+description: |
+  Final stage data lake ingestion flow.
+  Downloads NOAA Global Hourly weather data in batch mode
+  and uploads raw CSV files directly to Google Cloud Storage.
+
+inputs:
+  - id: year
+    type: STRING
+    defaults: "2025"
+  - id: file_limit
+    type: INT
+    defaults: 3
+  - id: max_workers
+    type: INT
+    defaults: 4
+  - id: bucket_name
+    type: STRING
+    defaults: "ghcnh-weather-final-vgod-488900"
+
+triggers:
+  - id: weekly_schedule
+    type: io.kestra.plugin.core.trigger.Schedule
+    cron: "0 5 * * 1"
+    timezone: Europe/Zurich
+    recoverMissedSchedules: ALL
+
+tasks:
+  - id: ingest_to_gcs
+    type: io.kestra.plugin.scripts.shell.Commands
+    taskRunner:
+      type: io.kestra.plugin.core.runner.Process
+    env:
+      YEAR: "{{ inputs.year }}"
+      FILE_LIMIT: "{{ inputs.file_limit }}"
+      MAX_WORKERS: "{{ inputs.max_workers }}"
+      BUCKET_NAME: "{{ inputs.bucket_name }}"
+      GOOGLE_APPLICATION_CREDENTIALS: "/app/credentials/service_account.json"
+    commands:
+      - python3 /app/ingestion/noaa_to_gcs.py
+
+  - id: verify_gcs_upload
+    type: io.kestra.plugin.scripts.shell.Commands
+    taskRunner:
+      type: io.kestra.plugin.core.runner.Process
+    env:
+      BUCKET_NAME: "{{ inputs.bucket_name }}"
+      YEAR: "{{ inputs.year }}"
+      GOOGLE_APPLICATION_CREDENTIALS: "/app/credentials/service_account.json"
+    commands:
+      - |
+        python3 - <<'PY'
+        import os
+        from google.cloud import storage
+
+        bucket_name = os.environ["BUCKET_NAME"]
+        year = os.environ["YEAR"]
+
+        client = storage.Client()
+        bucket = client.bucket(bucket_name)
+        blobs = list(bucket.list_blobs(prefix=f"raw/{year}/"))
+        count = len(blobs)
+
+        print(f"GCS files in raw/{year}/: {count}")
+
+        if count == 0:
+            raise SystemExit("Validation failed: no files found in GCS bucket")
+
+        print("Validation passed.")
+        PY

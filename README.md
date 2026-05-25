@@ -1,235 +1,397 @@
 # ghcnh-weather-analytics-pipeline
-End-to-end batch data engineering pipeline for preparing weather data to support flight delay analysis and prediction.
+
+End-to-end batch data engineering pipeline for NOAA Global Hourly weather station data.
+
+---
 
 ## Project Goal
-The goal of this project is to process raw weather data and transform it into a clean and structured format.
-This prepared data can then be used for analysis and machine learning models to help predict flight delays.
+
+This project builds a reproducible batch pipeline that ingests raw weather observations,
+stores them locally and in the cloud, applies transformations, and serves curated datasets
+for downstream analytics and future flight delay analysis.
+
+---
 
 ## Dataset
-We use the NOAA / NCEI Global Hourly Weather Dataset (2025).
 
-This dataset contains hourly weather observations from stations all around the world.
-Because the full dataset is very large, we limited our project to the first 1000 files.
+**Source:** NOAA / NCEI Global Hourly Weather Station Data
 
-Each file includes weather data collected at specific weather stations over time.
+The dataset contains hourly weather observations from stations around the world, including
+temperature, dew point, sea-level pressure, latitude, longitude, elevation, and other
+weather-related attributes.
+
+---
 
 ## Use Case
-The main user of this pipeline is an airline data analyst who needs reliable weather data for analysis. Raw weather data is often large and unstructured, making it difficult to use directly. This pipeline cleans and organizes the data so it can support analytics and machine learning models for predicting flight delays.
 
-## Planned Stack
-- Python
-- PostgreSQL
-- pgAdmin
-- Docker Compose
-- Kestra
-- Terraform
-- Google Cloud Storage
-- BigQuery
+The target user is a climate, weather, or operations analyst who needs clean and structured
+hourly weather data for downstream analysis.
 
-## Quick Start Midterm
-1. Clone the repository
+Typical use cases include:
 
-2. Start Docker containers:
-   ```bash
-   docker compose -f docker/docker-compose.yml down
-   rm -f data/database.mv.db data/database.trace.db
-   docker compose -f docker/docker-compose.yml up -d --build
-   ```
+- Analyzing temperature and pressure patterns across stations and time
+- Comparing weather conditions across locations
+- Preparing analytical features for future flight delay analysis
+- Storing weather observations in queryable local and cloud environments
 
-3. Check that the services are running:
-   ```bash
-   docker compose -f docker/docker-compose.yml ps
-   ```
+---
 
-4. Open Kestra:
-   - URL: `http://localhost:8080/ui/`
-   - Username: `admin@kestra.io`
-   - Password: `Admin1234`
+## Stack
 
-5. Run the orchestration flow in Kestra:
-   - Namespace: `weather.midterm`
-   - Flow: `weather_local_ingestion`
-   - Example input values:
-     - `year = 2025`
-     - `file_limit = 1`
-     - `row_limit = 10`
+| Layer | Tool |
+|---|---|
+| Ingestion | Python |
+| Local storage | PostgreSQL + pgAdmin |
+| Containerization | Docker Compose |
+| Orchestration | Kestra |
+| Infrastructure as Code | Terraform |
+| Data Lake | Google Cloud Storage |
+| Data Warehouse | BigQuery |
 
-6. Configure pgAdmin:
-   - URL: `http://localhost:8081`
-   - Email: `admin@admin.com`
-   - Password: `admin`
+---
 
-   Create a new server with:
-   - Host: `postgres`
-   - Port: `5432`
-   - Database: `weather`
-   - Username: `postgres`
-   - Password: `postgres`
+## Architecture
 
-7. Verify the data:
-   
-   From the terminal:
-   ```bash
-   docker exec -it weather_postgres psql -U postgres -d weather -c "SELECT COUNT(*) FROM weather_data;"
-   ```
-   
-   Example:
-   ```bash
-   docker exec -it weather_postgres psql -U postgres -d weather -c "SELECT station, date, name, tmp, dew, slp FROM weather_data LIMIT 5;"
-   ```
+```
+NOAA NCEI Global Hourly Dataset
+        │
+        ├── Midterm (Local Pipeline)
+        │   ├── Batch download with Python
+        │   ├── Raw local storage
+        │   ├── Transformation
+        │   └── PostgreSQL (weather_data)
+        │
+        └── Final (Cloud Pipeline)
+            ├── Terraform provisions:
+            │   ├── GCS bucket
+            │   └── BigQuery dataset
+            ├── Kestra flow: NOAA → GCS
+            └── Kestra flow: GCS → BigQuery
+```
 
-   Or using the **pgAdmin Query Tool**:
-   ```sql
-   SELECT COUNT(*) FROM weather_data;
-   ```
+---
 
-   Example:
-   ```sql
-   SELECT station, date, name, tmp, dew, slp
-   FROM weather_data
-   LIMIT 5;
-   ```
+## Quick Start
 
+### 1. Clone the repository
 
-## Workflow Orchestration
+```bash
+git clone <your-repo-url>
+cd ghcnh-weather-analytics-pipeline
+```
 
-This project uses **Kestra** as the workflow orchestrator for the midterm stage.
+### 2. Start Docker containers
 
-Implemented flow:
-- Namespace: `weather.midterm`
-- Flow: `weather_local_ingestion`
+```bash
+docker compose -f docker/docker-compose.yml up -d --build
+```
 
-The flow performs:
-1. batch download of NOAA weather files
-2. loading transformed data into local PostgreSQL
-3. validation that rows were inserted successfully
+> For the final cloud pipeline, you also need:
+> - a valid `credentials/service_account.json`
+> - a local `terraform/terraform.tfvars`
 
-The flow supports:
-- manual execution
-- scheduled execution
-- future runs
-- missed schedule recovery / backfill behavior
+### 3. Verify services are running
 
+```bash
+docker compose -f docker/docker-compose.yml ps
+```
+
+### 4. Open Kestra
+
+| | |
+|---|---|
+| URL | http://localhost:8080/ui/ |
+| Username | `admin@kestra.io` |
+| Password | `Admin1234` |
+
+### 5. Configure pgAdmin
+
+| | |
+|---|---|
+| URL | http://localhost:8081 |
+| Email | `admin@admin.com` |
+| Password | `admin` |
+
+Add a new server with these connection details:
+
+| Field | Value |
+|---|---|
+| Host | `postgres` |
+| Port | `5432` |
+| Database | `weather` |
+| Username | `postgres` |
+| Password | `postgres` |
+
+---
+
+## Midterm: Local Pipeline
+
+The midterm pipeline downloads NOAA weather data and loads it into local PostgreSQL.
+
+### Flow
+
+| | |
+|---|---|
+| Namespace | `weather.midterm` |
+| Flow | `weather_local_ingestion` |
+
+### What it does
+
+1. Downloads NOAA weather CSV files in batch mode
+2. Stores raw files locally
+3. Applies data transformation logic
+4. Loads transformed data into PostgreSQL
+5. Validates that rows were inserted successfully
+
+### Running the flow
+
+In the Kestra UI, use these recommended test inputs to start small:
+
+| Input | Value |
+|---|---|
+| `year` | `2025` |
+| `file_limit` | `1` |
+| `row_limit` | `10` |
+
+### Verifying local data
+
+Check row count:
+
+```bash
+docker exec -it weather_postgres psql -U postgres -d weather \
+  -c "SELECT COUNT(*) FROM weather_data;"
+```
+
+Inspect sample rows:
+
+```bash
+docker exec -it weather_postgres psql -U postgres -d weather \
+  -c "SELECT station, date, name, tmp, dew, slp FROM weather_data LIMIT 5;"
+```
+
+---
+
+## Final: Cloud Pipeline
+
+The final stage extends the project from local storage to Google Cloud.
+
+### Terraform Infrastructure
+
+Terraform provisions:
+
+- A Google Cloud Storage bucket (data lake)
+- A BigQuery dataset (data warehouse)
+
+**Files:** `terraform/`
+
+```bash
+cd terraform
+terraform init
+terraform plan
+terraform apply
+```
+
+Create a local `terraform.tfvars` file (this file is gitignored and must not be committed):
+
+```hcl
+project_id  = "your-gcp-project-id"
+region      = "europe-west6"
+bucket_name = "your-unique-bucket-name"
+dataset_id  = "weather_warehouse"
+```
+
+### GCP Credentials
+
+Place your Google Cloud service account key at:
+
+```
+credentials/service_account.json
+```
+
+> This file is gitignored and must never be committed.
+
+> **Note:** The `bucket_name` and `project_id` values you use in the flows below are the same ones you set in `terraform.tfvars`.
+
+---
+
+### Final Flow 1: NOAA → GCS
+
+| | |
+|---|---|
+| Namespace | `weather.final` |
+| Flow | `weather_gcs_ingestion` |
+
+**What it does:**
+
+1. Downloads NOAA weather data in batch mode
+2. Uploads raw CSV files to Google Cloud Storage
+3. Validates that files exist in the bucket
+
+**Recommended test inputs:**
+
+| Input | Value |
+|---|---|
+| `year` | `2025` |
+| `file_limit` | `1` |
+| `max_workers` | `2` |
+| `bucket_name` | your bucket name |
+
+**Expected result:** Files appear in the bucket under `raw/2025/`, for example:
+
+```
+raw/2025/01001099999.csv
+```
+
+---
+
+### Final Flow 2: GCS → BigQuery
+
+| | |
+|---|---|
+| Namespace | `weather.final` |
+| Flow | `weather_bq_transform` |
+
+**What it does:**
+
+1. Reads raw CSV files from GCS
+2. Applies transformation logic in Python
+3. Loads curated weather data into BigQuery
+4. Validates that the analytics table contains rows
+
+**Recommended test inputs:**
+
+| Input | Value | Note |
+|---|---|---|
+| `year` | `2025` | |
+| `file_limit` | `1` | Number of GCS files to process |
+| `row_limit` | `100` | Rows per file — set to `0` for full load |
+| `bucket_name` | your bucket name | Same value as in `terraform.tfvars` |
+| `dataset_id` | `weather_warehouse` | |
+| `table_id` | `weather_analytics` | |
+| `project_id` | your GCP project ID | Same value as in `terraform.tfvars` |
+
+**Expected result:** A BigQuery table is created at:
+
+```
+<project_id>.weather_warehouse.weather_analytics
+```
+
+---
 
 ## Data Transformation
 
-The pipeline includes a transformation step before loading data into PostgreSQL.
+The pipeline includes a transformation step applied before loading into both PostgreSQL and BigQuery.
 
-Current transformations:
-- convert column names to lowercase
-- normalize station names
-- parse timestamps
-- convert latitude, longitude, and elevation to numeric values
-- replace placeholder values in weather fields such as `tmp`, `dew`, and `slp`
-- standardize selected raw weather values for querying
+### Transformations applied
 
-Why this transformation is necessary:
-The raw NOAA files contain placeholder values, mixed formats, and raw string-based measurements that are not directly suitable for analysis.
+| Transformation | Why |
+|---|---|
+| Column names → lowercase | Consistent SQL access across tools |
+| Station names → Title Case | Human-readable for dashboards |
+| Timestamp parsing | Enables time-range queries |
+| Lat / lon / elevation → numeric | Geospatial filtering |
+| Placeholder replacement (`9999`, `+9999` → `NULL`) | Prevents skewed aggregations |
+| Temperature / pressure ÷ 10 | NOAA stores values as tenths of their unit |
 
-How it supports the use case:
-The target analyst needs structured and queryable weather observations across stations and time. These transformations make the data usable for filtering, comparison, and downstream analytics.
+### Why it is necessary
 
-What problem it solves:
-It converts raw operational weather files into a consistent local analytical dataset.
+Raw NOAA files contain placeholder values, mixed formats, and raw string-based weather
+fields that are not directly usable for analysis.
 
+### How it supports the use case
 
-## Quick Start Final 
-1. Install required tools:
-   - Terraform
-   - Google Cloud CLI
-  
-2. Create a Google Cloud Project:
-   - Go to the Google Cloud Console: https://console.cloud.google.com/
-   - Create a new project ("ghcnh-weather-pipeline")
-   - Enable billing for the project
+The transformed data becomes queryable and suitable for downstream analytics, comparisons
+across stations, and future feature engineering for weather-based operational analysis.
 
-3. Authenticate with Google Cloud:
-   ```bash
-   gcloud auth application-default login
-   ```
+---
 
-   ### Troubleshooting
-   If the following Terraform authentication error appears:
+## BigQuery Design
 
-   ```text
-   Error: Attempted to load application default credentials since neither `credentials` nor `access_token` was set in the provider block.
-   google: error getting credentials using GOOGLE_APPLICATION_CREDENTIALS environment variable
-   ```
-   
-   remove the environment variable:
-   ```bash
-   Remove-Item Env:GOOGLE_APPLICATION_CREDENTIALS
-   ```
+| | |
+|---|---|
+| Dataset | `weather_warehouse` |
+| Table | `weather_analytics` |
+| Partitioned by | `observation_date` |
+| Clustered by | `station`, `name` |
 
-   Then authenticate again with:
-   ```bash
-   gcloud auth application-default login
-   ```
-   
+**Why:**
 
-4. Navigate to Terraform directory:
-   ```bash
-   cd terraform
-   ```
+- Partitioning reduces bytes scanned for time-based queries
+- Clustering improves performance for station-level filtering and aggregation
 
-5. Initialize Terraform:
-   ```bash
-   terraform init
-   ```
+---
 
-6. Create Terraform variables file:
-   ```bash
-   cp terraform.tfvars.example terraform.tfvars
-   ```
+## Repository Structure
 
-7. Update the variables in terraform.tfvars:
-   ```hcl
-   project_id  = "your-project-id"
-   region      = "europe-west6"
-   bucket_name = "your-bucket-name"
-   dataset_id  = "your_dataset"
-   ```
-   We used:
-   - bucket_name = "ghcnh-weather-data-lake"
-   - dataset_id  = "weather_warehouse"
+```
+.
+├── credentials/                    # GCP service account key (gitignored)
+├── data/raw/2025/                  # Downloaded NOAA CSVs (gitignored)
+├── docker/
+│   ├── docker-compose.yml          # PostgreSQL + pgAdmin + Kestra
+│   ├── Dockerfile.ingestion
+│   └── Dockerfile.kestra
+├── docs/
+│   └── midterm_orchestration_plan.md
+├── ingestion/
+│   ├── download_weather_2025.py
+│   ├── download_weather_param.py
+│   ├── load_to_postgres.py
+│   ├── load_to_postgres_param.py
+│   ├── noaa_to_gcs.py
+│   └── gcs_to_bigquery.py
+├── orchestration/kestra/
+│   ├── README.md
+│   └── flows/
+│       ├── main_weather.midterm.weather_local_ingestion.yml
+│       ├── main_weather.final.weather_gcs_ingestion.yml
+│       └── main_weather.final.weather_bq_transform.yml
+├── terraform/
+│   ├── main.tf
+│   ├── variables.tf
+│   ├── outputs.tf
+│   ├── provider.tf
+│   ├── terraform.tfvars.example
+│   └── .gitignore
+├── tests/
+├── requirements.txt
+└── README.md
+```
 
-8. Preview Infrastracture changes:
-   ```bash
-   terraform plan
-   ```
+---
 
-9. Apply infrastructure:
-   ```bash
-   terraform apply
-   ```
-10. confirm deployment
+## Verification
 
-11. Verify Cloud Resources in Google Cloud Console
-    - In the Google Cloud Console, check that the Cloud Storage bucket has been created and is visible in the selected project.
-    - Also verify that the BigQuery dataset exists and is correctly displayed in the project.
+### Local
 
+- [ ] PostgreSQL contains rows in `weather_data`
+- [ ] pgAdmin can query the local table
+- [ ] Kestra execution for `weather_local_ingestion` completes successfully
 
+### Cloud
+
+- [ ] GCS bucket contains files under `raw/2025/`
+- [ ] BigQuery dataset `weather_warehouse` exists
+- [ ] BigQuery table `weather_analytics` exists and contains rows
+- [ ] Kestra execution for `weather_gcs_ingestion` completes successfully
+- [ ] Kestra execution for `weather_bq_transform` completes successfully
+
+---
 
 ## Status
 
 ### Midterm
-- Dataset and Use Case ✓
-- Ingestion Pipeline ✓
-- Local Storage ✓
-- Docker Compose ✓
-- Data Transformation ✓
-- Workflow Orchestration with Kestra ✓
 
-### Final Stage
-- Infrastructure as code (Terraform) ✓
-- GCS data lake Ingestion Pipeline ✓
-     - ingestion/noaa_to_gcs.py
-     - orchestration needs to be done
-- BigQuery warehouse Transformation Pipeline
+- [x] Dataset and Use Case
+- [x] Ingestion Pipeline
+- [x] Local Storage (PostgreSQL + pgAdmin)
+- [x] Dockerized Environment
+- [x] Data Transformation
+- [x] Workflow Orchestration (Kestra)
 
-## Repository Structure
-- `ingestion/`
-- `orchestration/`
-- `terraform/`
-- `docs/`
-- `tests/`
+### Final
+
+- [x] Infrastructure as Code (Terraform) — GCS bucket + BigQuery dataset
+- [x] Data Lake ingestion pipeline (NOAA → GCS, orchestrated)
+- [x] Data Warehouse transformation pipeline (GCS → BigQuery, partitioned + clustered)
+- [x] Repository documentation

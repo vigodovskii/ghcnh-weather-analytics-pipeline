@@ -58,6 +58,7 @@ services:
       - ../orchestration/kestra/flows:/app/flows
       - ../ingestion:/app/ingestion
       - ../data:/app/data
+      - ../credentials:/app/credentials:ro
       - /tmp/kestra-wd:/tmp/kestra-wd
     restart: always
 

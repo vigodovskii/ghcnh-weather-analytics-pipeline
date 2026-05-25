@@ -1,0 +1,88 @@
+id: weather_bq_transform
+namespace: weather.final
+
+description: |
+  Final stage warehouse pipeline.
+  Reads raw NOAA weather CSV files from Google Cloud Storage,
+  applies transformations, and loads curated data into BigQuery.
+
+inputs:
+  - id: year
+    type: STRING
+    defaults: "2025"
+  - id: file_limit
+    type: INT
+    defaults: 1
+  - id: row_limit
+    type: INT
+    defaults: 100
+  - id: bucket_name
+    type: STRING
+    defaults: "ghcnh-weather-final-vgod-488900"
+  - id: dataset_id
+    type: STRING
+    defaults: "weather_warehouse"
+  - id: table_id
+    type: STRING
+    defaults: "weather_analytics"
+  - id: project_id
+    type: STRING
+    defaults: "terraform-demo-488900"
+
+triggers:
+  - id: weekly_schedule
+    type: io.kestra.plugin.core.trigger.Schedule
+    cron: "0 7 * * 1"
+    timezone: Europe/Zurich
+    recoverMissedSchedules: ALL
+
+tasks:
+  - id: load_to_bigquery
+    type: io.kestra.plugin.scripts.shell.Commands
+    taskRunner:
+      type: io.kestra.plugin.core.runner.Process
+    env:
+      YEAR: "{{ inputs.year }}"
+      FILE_LIMIT: "{{ inputs.file_limit }}"
+      ROW_LIMIT: "{{ inputs.row_limit }}"
+      BUCKET_NAME: "{{ inputs.bucket_name }}"
+      DATASET_ID: "{{ inputs.dataset_id }}"
+      TABLE_ID: "{{ inputs.table_id }}"
+      GCP_PROJECT_ID: "{{ inputs.project_id }}"
+      GOOGLE_APPLICATION_CREDENTIALS: "/app/credentials/service_account.json"
+    commands:
+      - python3 /app/ingestion/gcs_to_bigquery.py
+
+  - id: verify_bigquery_table
+    type: io.kestra.plugin.scripts.shell.Commands
+    taskRunner:
+      type: io.kestra.plugin.core.runner.Process
+    env:
+      DATASET_ID: "{{ inputs.dataset_id }}"
+      TABLE_ID: "{{ inputs.table_id }}"
+      GCP_PROJECT_ID: "{{ inputs.project_id }}"
+      GOOGLE_APPLICATION_CREDENTIALS: "/app/credentials/service_account.json"
+    commands:
+      - |
+        python3 - <<'PY'
+        import os
+        from google.cloud import bigquery
+
+        project_id = os.environ["GCP_PROJECT_ID"]
+        dataset_id = os.environ["DATASET_ID"]
+        table_id = os.environ["TABLE_ID"]
+
+        client = bigquery.Client(project=project_id)
+        full_table = f"{project_id}.{dataset_id}.{table_id}"
+
+        query = f"SELECT COUNT(*) AS row_count FROM `{full_table}`"
+        result = list(client.query(query).result())
+        row_count = result[0].row_count if result else 0
+
+        print(f"BigQuery row count: {row_count}")
+
+        if row_count == 0:
+            raise SystemExit("Validation failed: BigQuery table is empty")
+
+        print("Validation passed.")
+        PY

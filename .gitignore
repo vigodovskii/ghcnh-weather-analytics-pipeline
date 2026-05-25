@@ -1,10 +1,14 @@
-# Python cache
-__pycache__/
-*.pyc
+# GCP credentials
+credentials/service_account.json
+terraform/terraform.tfvars
+
+# Local raw NOAA files
+data/raw/
 
 # Kestra local database
 data/database.mv.db
 data/database.trace.db
 
-# Raw downloaded data
-data/raw/
+# Python cache
+__pycache__/
+*.pyc
