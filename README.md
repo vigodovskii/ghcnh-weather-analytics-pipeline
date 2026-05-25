@@ -206,6 +206,8 @@ credentials/service_account.json
 
 > This file is gitignored and must never be committed.
 
+> **Note:** The `bucket_name` and `project_id` values you use in the flows below are the same ones you set in `terraform.tfvars`.
+
 ---
 
 ### Final Flow 1: NOAA → GCS
@@ -228,7 +230,7 @@ credentials/service_account.json
 | `year` | `2025` |
 | `file_limit` | `1` |
 | `max_workers` | `2` |
-| `bucket_name` | `your-unique-bucket-name` |
+| `bucket_name` | your bucket name |
 
 **Expected result:** Files appear in the bucket under `raw/2025/`, for example:
 
@@ -254,12 +256,15 @@ raw/2025/01001099999.csv
 
 **Recommended test inputs:**
 
-| Input | Value |
-|---|---|
-| `year` | `2025` |
-| `bucket_name` | `your-unique-bucket-name` |
-| `dataset_id` | `weather_warehouse` |
-| `project_id` | `your-gcp-project-id` |
+| Input | Value | Note |
+|---|---|---|
+| `year` | `2025` | |
+| `file_limit` | `1` | Number of GCS files to process |
+| `row_limit` | `100` | Rows per file — set to `0` for full load |
+| `bucket_name` | your bucket name | Same value as in `terraform.tfvars` |
+| `dataset_id` | `weather_warehouse` | |
+| `table_id` | `weather_analytics` | |
+| `project_id` | your GCP project ID | Same value as in `terraform.tfvars` |
 
 **Expected result:** A BigQuery table is created at:
 
