@@ -179,15 +179,6 @@ The final stage extends the project from local storage to Google Cloud.
 
 Before running the final cloud pipeline, you must create a Google Cloud project in Google Cloud Platform.
 
-### Terraform Infrastructure
-
-Terraform provisions:
-
-- A Google Cloud Storage bucket (data lake)
-- A BigQuery dataset (data warehouse)
-
-**Files:** `terraform/`
-
 ### GCP Credentials
 
 Place your Google Cloud service account key at:
@@ -201,6 +192,15 @@ credentials/service_account.json
 > **Note:** The `bucket_name` and `project_id` values you use in the flows below are the same ones you set in `terraform.tfvars`.
 
 ---
+
+### Terraform Infrastructure
+
+Terraform provisions:
+
+- A Google Cloud Storage bucket (data lake)
+- A BigQuery dataset (data warehouse)
+
+**Files:** `terraform/`
 
 Create a local `terraform.tfvars` file (this file is gitignored and must not be committed):
 
