@@ -175,6 +175,10 @@ docker exec -it weather_postgres psql -U postgres -d weather \
 
 The final stage extends the project from local storage to Google Cloud.
 
+### Prerequisite: Google Cloud Setup
+
+Before running the final cloud pipeline, you must create a Google Cloud project in Google Cloud Platform.
+
 ### Terraform Infrastructure
 
 Terraform provisions:
