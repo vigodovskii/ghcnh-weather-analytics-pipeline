@@ -188,22 +188,6 @@ Terraform provisions:
 
 **Files:** `terraform/`
 
-```bash
-cd terraform
-terraform init
-terraform plan
-terraform apply
-```
-
-Create a local `terraform.tfvars` file (this file is gitignored and must not be committed):
-
-```hcl
-project_id  = "your-gcp-project-id"
-region      = "europe-west6"
-bucket_name = "your-unique-bucket-name"
-dataset_id  = "weather_warehouse"
-```
-
 ### GCP Credentials
 
 Place your Google Cloud service account key at:
@@ -217,6 +201,22 @@ credentials/service_account.json
 > **Note:** The `bucket_name` and `project_id` values you use in the flows below are the same ones you set in `terraform.tfvars`.
 
 ---
+
+Create a local `terraform.tfvars` file (this file is gitignored and must not be committed):
+
+```hcl
+project_id  = "your-gcp-project-id"
+region      = "europe-west6"
+bucket_name = "your-unique-bucket-name"
+dataset_id  = "weather_warehouse"
+```
+
+```bash
+cd terraform
+terraform init
+terraform plan
+terraform apply
+```
 
 ### Final Flow 1: NOAA → GCS
 
