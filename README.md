@@ -201,6 +201,9 @@ Terraform provisions:
 - A BigQuery dataset (data warehouse)
 
 **Files:** `terraform/`
+```bash
+cd terraform
+```
 
 Create a local `terraform.tfvars` file (this file is gitignored and must not be committed):
 
@@ -214,7 +217,6 @@ dataset_id  = "weather_warehouse"
 Run:
 
 ```bash
-cd terraform
 terraform init
 terraform plan
 terraform apply
